@@ -66,26 +66,35 @@ func Index(c *gin.Context) {
 }
 
 func SynthesizeVoicePost(c *gin.Context) {
-	request := struct {
-		Text         string `json:"t"`
-		VoiceName    string `json:"v"`
-		Rate         string `json:"r"`
-		Pitch        string `json:"p"`
-		OutputFormat string `json:"o"`
-	}{
-		Text:         "",
-		VoiceName:    "zh-CN-XiaochenMultilingualNeural",
-		Rate:         "0",
-		Pitch:        "0",
-		OutputFormat: "audio-24khz-48kbitrate-mono-mp3",
+	var text, voiceName, rate, pitch, outputFormat string
+	if c.GetHeader("Content-Type") == "application/json" {
+		request := struct {
+			Text         string `json:"t"`
+			VoiceName    string `json:"v"`
+			Rate         string `json:"r"`
+			Pitch        string `json:"p"`
+			OutputFormat string `json:"o"`
+		}{
+			Text:         "",
+			VoiceName:    "zh-CN-XiaochenMultilingualNeural",
+			Rate:         "0",
+			Pitch:        "0",
+			OutputFormat: "audio-24khz-48kbitrate-mono-mp3",
+		}
+		if err := c.BindJSON(&request); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		text, voiceName, rate, pitch, outputFormat = request.Text, request.VoiceName, request.Rate, request.Pitch, request.OutputFormat
+	} else {
+		text = c.PostForm("t")
+		voiceName = c.DefaultPostForm("v", "zh-CN-XiaochenMultilingualNeural")
+		rate = c.DefaultPostForm("r", "0")
+		pitch = c.DefaultPostForm("p", "0")
+		outputFormat = c.DefaultPostForm("o", "audio-24khz-48kbitrate-mono-mp3")
 	}
 
-	if err := c.BindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	voice, err := utils.GetVoice(request.Text, request.VoiceName, request.Rate, request.Pitch, request.OutputFormat)
+	voice, err := utils.GetVoice(text, voiceName, rate, pitch, outputFormat)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
