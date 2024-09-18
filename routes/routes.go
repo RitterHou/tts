@@ -16,5 +16,7 @@ func SetupRouter() *gin.Engine {
 	router.GET("/tts", handlers.SynthesizeVoice)
 	router.GET("/", handlers.Index)
 
+	router.GET("/form", handlers.Form)
+
 	return router
 }

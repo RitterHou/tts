@@ -102,3 +102,9 @@ func SynthesizeVoicePost(c *gin.Context) {
 
 	c.Data(http.StatusOK, "audio/mpeg", voice)
 }
+
+func Form(c *gin.Context) {
+	c.HTML(http.StatusOK, "form.html", gin.H{
+		"title": "FORM",
+	})
+}
