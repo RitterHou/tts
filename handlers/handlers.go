@@ -45,7 +45,7 @@ func GetVoiceList(c *gin.Context) {
 
 func SynthesizeVoice(c *gin.Context) {
 	text := c.Query("t")
-	voiceName := c.DefaultQuery("v", "zh-CN-XiaoxiaoMultilingualNeural")
+	voiceName := c.DefaultQuery("v", "zh-CN-XiaochenMultilingualNeural")
 	rate := c.DefaultQuery("r", "0")
 	pitch := c.DefaultQuery("p", "0")
 	outputFormat := c.DefaultQuery("o", "audio-24khz-48kbitrate-mono-mp3")
